@@ -76,13 +76,13 @@ public class WalletService {
 	    }
 
 	    
-	    public String payTheOrder(Long orderId) {
+	    public void payTheOrder(Long orderId) {
 	    	Double orderTotal = shopProxy.showOrder(orderId).getTotal();
 	    	Long userId=shopProxy.showOrder(orderId).getUserId();
 	    	Optional<User> user = userRepo.findById(userId);
 	    	Wallet wallet= user.get().getWallet();
 	    	Double walletBalance = wallet.getBalance();
-	    	if(orderTotal <= walletBalance  && walletBalance - orderTotal >= 0) {
+	    	 
 	    		walletBalance = walletBalance - orderTotal;
 	    		wallet.setBalance(walletBalance);
 	    		walletRepo.save(wallet);
@@ -95,10 +95,10 @@ public class WalletService {
 	    		orderTransaction.setUserId(userId);
 	    		transactionRepo.save(orderTransaction);
 	    		shopProxy.updateOrderStatusToPaid(orderId);
-	    		return "Order Payment processing is completed";
-	    	}
 	    		
-	    	throw new InsufficientWalletBalanceException("Wallet Balance is not enough for order payment");
+	    	
+	    		
+	    	
 	 
 	    }
 

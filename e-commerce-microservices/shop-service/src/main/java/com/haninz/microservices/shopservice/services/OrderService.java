@@ -63,30 +63,33 @@ public class OrderService {
 		}
 	
 	
-	public String payUserOrder(Long orderId) {
+	public Order payUserOrder(Long orderId) throws Exception {
 		Optional<Order> order = orderRepo.findById(orderId);
 		if(order.isEmpty()) {
 			throw new OrderNotFoundException("Order id not found "+ orderId);
 		}
 		Order theOrder = order.get();
+		Long userId = theOrder.getUserId();
+		Double walletBalance = walletProxy.getUserWalletDto(userId).getWalletBalance();
+		Double orderTotal= theOrder.getTotal();
+		if(orderTotal <= walletBalance  && walletBalance - orderTotal >= 0) {
 		walletProxy.payUserOrder(theOrder.getId());
-		Optional<Order> updatedOrder = orderRepo.findById(orderId);
-		Order newOrder=updatedOrder.get();
-		
-		if(newOrder.getStatus().equals("Paid")) {
-			List<OrderItem> orderedItems= newOrder.getOrderItems();
+			List<OrderItem> orderedItems= theOrder.getOrderItems();
 			for(OrderItem item:orderedItems ) {
 				inventoryProxy.updateProductQuantity(item.getProductId(), item.getQuantity());
+				
 			}
-			
-//			cartRepo.delete(cart);
-//			Cart newCart= new Cart();
-//			newCart.setUserId(userId);
-//			newCart.setName("User new cart");
-//			cartRepo.save(newCart);
+		
+          
+		}
+		else {
+			theOrder.setStatus("Rejected");
+			orderRepo.save(theOrder);
 			
 		}
-		return "order is paid";
+		
+		return theOrder;
+		
 	}
 		
 		

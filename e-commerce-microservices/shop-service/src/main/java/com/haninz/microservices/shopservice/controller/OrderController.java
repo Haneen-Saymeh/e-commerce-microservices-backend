@@ -56,10 +56,10 @@ public class OrderController {
 	
 	
 	@PostMapping("/orders/{orderId}/pay")
-	public String PayTheOrder(@PathVariable Long orderId) throws Exception {
-		orderService.payUserOrder(orderId);
+	public Order PayTheOrder(@PathVariable Long orderId) throws Exception {
+		Order order=orderService.payUserOrder(orderId);
 		
-		 return "order is paid";
+		 return order;
 	}
 	
 	
@@ -105,10 +105,11 @@ public class OrderController {
 	
 	
 	 @PutMapping("/orders/{orderId}/status")
-	    public void updateOrderStatusToPaid(@PathVariable Long orderId) {
+	    public Order updateOrderStatusToPaid(@PathVariable Long orderId) {
 		 Order order = orderService.findOrder(orderId);
 		 order.setStatus("Paid");
 		 orderService.saveOrder(order);
+		 return order;
 		 
 	        
 	    }
