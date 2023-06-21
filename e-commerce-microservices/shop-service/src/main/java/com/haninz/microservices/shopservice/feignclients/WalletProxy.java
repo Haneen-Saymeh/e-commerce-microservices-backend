@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import com.haninz.microservices.shopservice.DTO.UserWalletDto;
-import com.haninz.microservices.shopservice.models.ShopUser;
+
 
 
 
