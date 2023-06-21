@@ -79,6 +79,7 @@ public class OrderService {
 				inventoryProxy.updateProductQuantity(item.getProductId(), item.getQuantity());
 				
 			}
+			
 		
           
 		}
@@ -87,8 +88,8 @@ public class OrderService {
 			orderRepo.save(theOrder);
 			
 		}
-		
-		return theOrder;
+		Optional<Order> updatedOrder = orderRepo.findById(orderId);
+		return updatedOrder.get();
 		
 	}
 		
@@ -117,11 +118,11 @@ public class OrderService {
 	}
 	
 	
-	public Order findOrderByUser(Long userId) {
-		Order order=orderRepo.findByUserId(userId);
-		return order;
-		
-	}
+//	public Order findOrderByUser(Long userId) {
+//		Order order=orderRepo.findByUserId(userId);
+//		return order;
+//		
+//	}
 
 	public void saveOrder(Order order) {
 		orderRepo.save(order);
@@ -143,6 +144,11 @@ public class OrderService {
 		order.setOrderItems(orderItems);
 		orderRepo.save(order);
 		
+	}
+	
+	public List<Order> getAllUserOrders(Long userId){
+		List<Order> orders= orderRepo.findByUserId(userId);
+		return orders;
 	}
 	
 	

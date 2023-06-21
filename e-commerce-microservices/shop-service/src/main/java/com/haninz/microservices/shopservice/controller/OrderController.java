@@ -106,14 +106,14 @@ public class OrderController {
 	
 	 @PutMapping("/orders/{orderId}/status")
 	    public Order updateOrderStatusToPaid(@PathVariable Long orderId) {
-		 Order theOrder = orderService.findOrder(orderId);
-		 theOrder.setStatus("Paid");
-		 orderService.saveOrder(theOrder);
-		 return theOrder;
+		 Order updatedOrder = orderService.findOrder(orderId);
+		 updatedOrder.setStatus("Paid");
+		 orderService.saveOrder(updatedOrder);
+		 return updatedOrder;
 		    
 	    }
 	 
-	 // if paid no
+	
 	 @PostMapping("/orders/{orderId}/remove/{orderItemId}")
 		public Order removeFromOrder(@PathVariable("orderId") Long orderId, @PathVariable("orderItemId") Long orderItemId) throws Exception {
 			Order order = orderService.findOrder(orderId);
@@ -150,6 +150,14 @@ public class OrderController {
 			throw new Exception("Order can't be adjusted");
 			
 		}
+	 
+	 
+	 @GetMapping("/orders/list/{userId}")
+	 public List<Order> getAllUserOrders(@PathVariable Long userId){
+		 List<Order> orders= orderService.getAllUserOrders(userId);
+		 return orders;
+		 
+	 }
 	 
 	 
 	 
