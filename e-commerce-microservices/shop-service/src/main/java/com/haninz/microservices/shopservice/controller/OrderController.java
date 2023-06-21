@@ -106,13 +106,13 @@ public class OrderController {
 	
 	 @PutMapping("/orders/{orderId}/status")
 	    public Order updateOrderStatusToPaid(@PathVariable Long orderId) {
-		 Order order = orderService.findOrder(orderId);
-		 order.setStatus("Paid");
-		 orderService.saveOrder(order);
-		 return order;
-		 
-	        
+		 Order theOrder = orderService.findOrder(orderId);
+		 theOrder.setStatus("Paid");
+		 orderService.saveOrder(theOrder);
+		 return theOrder;
+		    
 	    }
+	 
 	 // if paid no
 	 @PostMapping("/orders/{orderId}/remove/{orderItemId}")
 		public Order removeFromOrder(@PathVariable("orderId") Long orderId, @PathVariable("orderItemId") Long orderItemId) throws Exception {
