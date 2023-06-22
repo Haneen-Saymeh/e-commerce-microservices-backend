@@ -68,7 +68,7 @@ public class ProductController {
 	
 	
 
-	@PutMapping("/products/{productId}")
+	@PutMapping("/products/{productId}/stock")
 	public Product increaseProductQuantity(@PathVariable Long productId, @RequestBody int quantity){
 		Product product = productService.getProduct(productId);
 		int productQuanity = product.getStock();

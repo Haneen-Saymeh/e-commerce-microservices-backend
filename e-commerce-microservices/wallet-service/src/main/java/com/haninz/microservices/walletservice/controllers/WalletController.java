@@ -78,7 +78,7 @@ public class WalletController {
 	}
 	
 	
-	@GetMapping("/wallets/transacftions/{walletId}")
+	@GetMapping("/wallets/transactions/{walletId}")
 	public List<PaymentTransactionHistory> getWalletTransactions(@PathVariable Long walletId) {
 		Wallet wallet = walletService.getWallet(walletId);
 		return wallet.getTransactions();

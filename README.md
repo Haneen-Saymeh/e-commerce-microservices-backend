@@ -11,7 +11,7 @@ The project is an e-commerce application that consists of three microservices: w
 * Spring cloud gateway
 * Spring Data JPA
 * Eureka Service registry
-* Resilience4j circuit breake
+* Resilience4j circuit breaker
 * MySQL
 * Maven
 

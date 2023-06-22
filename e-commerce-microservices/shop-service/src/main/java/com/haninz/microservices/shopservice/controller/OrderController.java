@@ -65,17 +65,20 @@ public class OrderController {
 	
 	@GetMapping("/orders/{orderId}")
 	public Order showOrder(@PathVariable Long orderId) {
-		return orderService.showUserOrder(orderId);
+		return orderService.findOrder(orderId);
 	}
 	
 	@PutMapping("/orders/{orderId}/cancel")
-	public Order cancelOrder(@PathVariable Long orderId) {
+	public Order cancelOrder(@PathVariable Long orderId) throws Exception {
 		Order order = orderService.findOrder(orderId);
+		if(order.getStatus().equals("Pending")) {
 		order.setStatus("Cancelled");
 		orderService.saveOrder(order);
-		Long userId= order.getUserId();
-		Cart cart = cartService.getCartByUserId(userId);
-		cartService.emptyItemsFromCart(cart.getId());
+		}
+		else {
+			throw new Exception("Can't change status of the order");
+		}
+		
 		return order;
 	}
 	

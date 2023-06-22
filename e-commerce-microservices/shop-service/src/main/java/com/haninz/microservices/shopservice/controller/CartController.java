@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.haninz.microservices.shopservice.DTO.ItemDto;
 import com.haninz.microservices.shopservice.feignclients.InventoryProxy;
 import com.haninz.microservices.shopservice.feignclients.WalletProxy;
 import com.haninz.microservices.shopservice.models.Cart;
@@ -66,12 +67,12 @@ public class CartController {
 		
 	}
 	
+	
 	public Cart InventoryProxyFallback(Long cartId, Long productId, Integer quantity, Exception ex) {
 		 Cart fallbackCart = new Cart();
 		  
 		    return fallbackCart;
 	}
-	
 	
 	@PostMapping("/carts/{cartId}/remove/{cartItemId}")
 	public Cart removeFromCart(@PathVariable("cartId") Long cartId, @PathVariable("cartItemId") Long cartItemId) {
