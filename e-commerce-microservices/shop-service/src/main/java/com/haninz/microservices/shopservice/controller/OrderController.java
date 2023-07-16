@@ -90,31 +90,6 @@ public class OrderController {
 		return order.getOrderItems();
 	}
 	
-	@GetMapping("/orders/{orderId}/itemsDto")
-	public List<OrderItemDto> sendOrderItems(@PathVariable Long orderId) {
-		Order order=orderService.showUserOrder(orderId);
-		List<OrderItemDto> orderitemsDto = new ArrayList();
-		List<OrderItem> orderItems= order.getOrderItems();
-		for(OrderItem orderItem: orderItems ) {
-			OrderItemDto dtoItem = new OrderItemDto();
-			dtoItem.setProductId(orderItem.getProductId());
-			dtoItem.setQuantity(orderItem.getQuantity());
-			orderitemsDto.add(dtoItem);
-			
-		}
-		return orderitemsDto;
-		
-	}
-	
-	
-	 @PutMapping("/orders/{orderId}/status")
-	    public Order updateOrderStatusToPaid(@PathVariable Long orderId) {
-		 Order updatedOrder = orderService.findOrder(orderId);
-		 updatedOrder.setStatus("Paid");
-		 orderService.saveOrder(updatedOrder);
-		 return updatedOrder;
-		    
-	    }
 	 
 	
 	 @PostMapping("/orders/{orderId}/remove/{orderItemId}")
@@ -122,12 +97,8 @@ public class OrderController {
 			Order order = orderService.findOrder(orderId);
 			if(order.getStatus().equals("Pending")) {
 				OrderItem orderItem = orderItemService.getOrderItem(orderItemId);
-				
 				orderService.removeItemFromOrder(order, orderItem);
-				Double amountToRemove= orderItem.getPrice()*orderItem.getQuantity();
-				order.setTotal(order.getTotal()-amountToRemove);
-				
-				orderService.saveOrder(order);
+			
 				return order;
 				
 			}
@@ -136,31 +107,14 @@ public class OrderController {
 		}
 	 
 	 
-	 @PostMapping("/orders/{orderId}/add/{orderItemId}")
-		public Order addItemToOrder(@PathVariable("orderId") Long orderId, @PathVariable("orderItemId") Long orderItemId) throws Exception {
-			Order order = orderService.findOrder(orderId);
-			if(order.getStatus().equals("Pending")) {
-				OrderItem orderItem = orderItemService.getOrderItem(orderItemId);
-				
-				orderService.addItemToOrder(order, orderItem);
-				Double amountToRemove= orderItem.getPrice()*orderItem.getQuantity();
-				order.setTotal(order.getTotal()-amountToRemove);
-				
-				orderService.saveOrder(order);
-				return order;
-				
-			}
-			throw new Exception("Order can't be adjusted");
-			
-		}
+	
 	 
 	 
 	 @GetMapping("/orders/list/{userId}")
 	 public List<Order> getAllUserOrders(@PathVariable Long userId){
 		 List<Order> orders= orderService.getAllUserOrders(userId);
 		 return orders;
-		 
-	 }
+		 }
 	 
 	 
 	 

@@ -17,6 +17,14 @@ public class WalletServiceExceptionHandler {
 	
 	
 	@ExceptionHandler
+	public ResponseEntity<WalletServiceErrorResponse> handleException(UsernameExistsException exc){
+		WalletServiceErrorResponse error = new WalletServiceErrorResponse(HttpStatus.BAD_REQUEST.value(),exc.getMessage(),System.currentTimeMillis());
+		
+		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
+	}
+	
+	
+	@ExceptionHandler
 	public ResponseEntity<WalletServiceErrorResponse> handleException(WalletNotFoundException exc){
 		WalletServiceErrorResponse error = new WalletServiceErrorResponse(HttpStatus.NOT_FOUND.value(),exc.getMessage(),System.currentTimeMillis());
 		

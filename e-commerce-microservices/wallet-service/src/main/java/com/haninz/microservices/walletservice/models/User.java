@@ -51,12 +51,14 @@ public class User {
     @JoinColumn(name= "wallet_id")
     private Wallet wallet;
 
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"))
-//	private List<Role> roles;
+ @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+        private List<Role> roles;
 
 	public User() {
-//		roles = new ArrayList<>();
+        roles = new ArrayList<>();
 
 	}
 
@@ -111,12 +113,12 @@ public class User {
 		this.wallet = wallet;
 	}
 
-//	public List<Role> getRoles() {
-//		return roles;
-//	}
-//
-//	public void setRoles(List<Role> roles) {
-//		this.roles = roles;
-//	}
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 }

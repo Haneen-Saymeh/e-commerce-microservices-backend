@@ -94,12 +94,7 @@ public class WalletService {
 	    		orderTransaction.setWallet(wallet);
 	    		orderTransaction.setUserId(userId);
 	    		transactionRepo.save(orderTransaction);
-	    		shopProxy.updateOrderStatusToPaid(orderId);
 	    		
-	    	
-	    		
-	    	
-	 
 	    }
 
 }

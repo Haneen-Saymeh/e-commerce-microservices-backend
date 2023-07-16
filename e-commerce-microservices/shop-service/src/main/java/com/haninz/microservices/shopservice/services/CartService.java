@@ -82,10 +82,6 @@ public class CartService {
 		return cart;
 	}
 
-
-
-	
-	
 	
 	public void removeItemToCart(Cart cart, CartItem cartItem) {
 		List<CartItem> cartItems = cart.getCartItems();
@@ -110,12 +106,8 @@ public class CartService {
 
 
 	public Cart updateCartItemQuantity(Long cartId, Long itemId, Integer quantity) {
-		 Optional<Cart> cart = cartRepo.findById(cartId);
-	        if (cart.isEmpty()) {
-	            throw new CartNotFoundException("Cart not found with id: " + cartId);
-	        }
-	        Cart theCart = cart.get();
-	        List<CartItem> cartItems = theCart.getCartItems();
+		 Cart cart = getCart(cartId);
+	        List<CartItem> cartItems = cart.getCartItems();
 	        CartItem cartItemToUpdate = null;
 
 	        for (CartItem item : cartItems) {
@@ -123,16 +115,19 @@ public class CartService {
 	                cartItemToUpdate = item;
 	                break;
 	            }
+	            //throw new CartItemNotFoundException("Cart item not found with id: " + itemId);
 	        }
-
-	        if (cartItemToUpdate == null) {
-	            throw new CartItemNotFoundException("Cart item not found with id: " + itemId);
-	        }
+	        
+	        Integer productStock= inventoryProxy.getOneProduct(cartItemToUpdate.getProductId()).getStock();
+			
+			if (quantity > productStock) {
+				throw new InsufficientStockException("Not enough product quanity");
+			}
 
 	        cartItemToUpdate.setQuantity(quantity);
-	        cartRepo.save(theCart);
+	        cartRepo.save(cart);
 
-	        return theCart;
+	        return cart;
 	    }
 	
 	     

@@ -45,10 +45,8 @@ public class CartController {
 	
 	
 	@PostMapping("/carts/{userId}")
-	public Cart createCart(@PathVariable Long userId) throws Exception{
+	public void createCart(@PathVariable Long userId) throws Exception{
 		Cart cart=cartService.createCart(userId);
-		
-		 return cart;
 	}
 	
 	

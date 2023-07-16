@@ -63,17 +63,26 @@ public class OrderService {
 		}
 	
 	
-	public Order payUserOrder(Long orderId) throws Exception {
-		Optional<Order> order = orderRepo.findById(orderId);
+	public Order findOrder(Long orderId) {
+		Optional<Order> order=orderRepo.findById(orderId);
 		if(order.isEmpty()) {
-			throw new OrderNotFoundException("Order id not found "+ orderId);
+			throw new OrderNotFoundException("Order Id not found "+ orderId);
 		}
-		Order theOrder = order.get();
+		return order.get();
+		
+	}
+	
+	
+	public Order payUserOrder(Long orderId) throws Exception {
+		Order theOrder = findOrder(orderId);
+		if(theOrder.getStatus().equals("Pending")) {
 		Long userId = theOrder.getUserId();
 		Double walletBalance = walletProxy.getUserWalletDto(userId).getWalletBalance();
 		Double orderTotal= theOrder.getTotal();
 		if(orderTotal <= walletBalance  && walletBalance - orderTotal >= 0) {
 		walletProxy.payUserOrder(theOrder.getId());
+		theOrder.setStatus("Paid");
+		orderRepo.save(theOrder);
 			List<OrderItem> orderedItems= theOrder.getOrderItems();
 			for(OrderItem item:orderedItems ) {
 				inventoryProxy.updateProductQuantity(item.getProductId(), item.getQuantity());
@@ -88,8 +97,11 @@ public class OrderService {
 			orderRepo.save(theOrder);
 			
 		}
-		Optional<Order> updatedOrder = orderRepo.findById(orderId);
-		return updatedOrder.get();
+		}
+		else {
+			throw new Exception("Can't pay for this order!");
+		}
+		return theOrder;
 		
 	}
 		
@@ -108,22 +120,7 @@ public class OrderService {
 		orderRepo.deleteById(OrderId);
 	}
 	
-	public Order findOrder(Long orderId) {
-		Optional<Order> order=orderRepo.findById(orderId);
-		if(order.isEmpty()) {
-			throw new OrderNotFoundException("Order Id not found "+ orderId);
-		}
-		return order.get();
-		
-	}
 	
-	
-//	public Order findOrderByUser(Long userId) {
-//		Order order=orderRepo.findByUserId(userId);
-//		return order;
-//		
-//	}
-
 	public void saveOrder(Order order) {
 		orderRepo.save(order);
 		
@@ -133,18 +130,16 @@ public class OrderService {
 		List<OrderItem> orderItems = order.getOrderItems();
 		orderItems.remove(orderItem);
 		order.setOrderItems(orderItems);
+		Double amountToRemove= orderItem.getPrice()*orderItem.getQuantity();
+		order.setTotal(order.getTotal()-amountToRemove);
 		orderRepo.save(order);
-		
 	}
 	
 	
-	public void addItemToOrder(Order order, OrderItem orderItem) {
-		List<OrderItem> orderItems = order.getOrderItems();
-		orderItems.add(orderItem);
-		order.setOrderItems(orderItems);
-		orderRepo.save(order);
-		
-	}
+	
+	
+	
+	
 	
 	public List<Order> getAllUserOrders(Long userId){
 		List<Order> orders= orderRepo.findByUserId(userId);

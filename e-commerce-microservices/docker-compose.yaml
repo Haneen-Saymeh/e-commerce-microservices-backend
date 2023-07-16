@@ -1,0 +1,165 @@
+version: '3.7'
+
+services:
+
+
+  spring-cloud-config-server:
+    image: haninz/cms-spring-cloud-config-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8888:8888"
+    networks:
+      - commerce-network
+    environment:
+      SPRING_CLOUD_CONFIG_SERVER_GIT_URI: https://github.com/Haneen-Saymeh/spring-config-microservices.git
+
+  shop-service:
+    image: haninz/cms-shop-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8083:8083"
+    networks:
+      - commerce-network
+    depends_on:
+      - naming-server
+      - shop-db
+      - spring-cloud-config-server
+    
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      SPRING.DATASOURCE.URL: jdbc:mysql://shop-db:3306/shop-schema
+      SPRING.DATASOURCE.USERNAME: springstudent
+      SPRING.DATASOURCE.PASSWORD: springstudent
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING.JPA.HIBERNATE.DDL-AUTO: update
+
+  wallet-service:
+    image: haninz/cms-wallet-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8087:8087"
+    networks:
+      - commerce-network
+    depends_on:
+      - naming-server
+      - wallet-db
+      - spring-cloud-config-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      SPRING.DATASOURCE.URL: jdbc:mysql://wallet-db:3306/wallet-schema
+      SPRING.DATASOURCE.USERNAME: springstudent
+      SPRING.DATASOURCE.PASSWORD: springstudent
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING.JPA.HIBERNATE.DDL-AUTO: update
+
+  inventory-service:
+    image: haninz/cms-inventory-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8085:8085"
+    networks:
+      - commerce-network
+    depends_on:
+      - naming-server
+      - inventory-db
+      - spring-cloud-config-server
+      
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+      SPRING.DATASOURCE.URL: jdbc:mysql://inventory-db:3306/inventory-schema
+      SPRING.DATASOURCE.USERNAME: springstudent
+      SPRING.DATASOURCE.PASSWORD: springstudent
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQLDialect
+      SPRING.JPA.HIBERNATE.DDL-AUTO: update
+    
+    
+
+  api-gateway:
+    image: haninz/cms-api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    networks:
+      - commerce-network
+    depends_on:
+      - naming-server
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT: http://zipkin-server:9411/api/v2/spans
+
+  naming-server:
+    image: haninz/cms-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - commerce-network
+
+
+
+#docker run -p 9411:9411 openzipkin/zipkin:2.23
+
+  zipkin-server:
+    image: openzipkin/zipkin
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - commerce-network
+    restart: always #Restart if there is a problem starting up
+
+  wallet-db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3308:3306"
+    networks:
+      - commerce-network
+    environment:
+      MYSQL_ROOT_PASSWORD: My#666#sqlZ
+      MYSQL_DATABASE: wallet-schema
+      MYSQL_USER: springstudent
+      MYSQL_PASSWORD: springstudent
+    volumes:
+      - wallet-db-data:/var/lib/mysql
+
+  shop-db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3307:3306"
+    networks:
+      - commerce-network
+    environment:
+      MYSQL_ROOT_PASSWORD: My#666#sqlZ
+      MYSQL_DATABASE: shop-schema
+      MYSQL_USER: springstudent
+      MYSQL_PASSWORD: springstudent
+    volumes:
+      - shop-db-data:/var/lib/mysql
+
+  inventory-db:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - commerce-network
+    environment:
+      MYSQL_ROOT_PASSWORD: My#666#sqlZ
+      MYSQL_DATABASE: inventory-schema
+      MYSQL_USER: springstudent
+      MYSQL_PASSWORD: springstudent
+    volumes:
+      - inventory-db-data:/var/lib/mysql
+
+networks:
+  commerce-network:
+
+volumes:
+  wallet-db-data:
+  shop-db-data:
+  inventory-db-data:
