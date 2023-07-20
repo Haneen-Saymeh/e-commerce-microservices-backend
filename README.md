@@ -1,4 +1,5 @@
 
+![ecommerce-microservice-architecture](https://github.com/Haneen-Saymeh/e-commerce-microservices-backend/blob/master/e-commerce-microservices-architecture.JPG)
 # E-commerce app using microservices
 
 The project is an e-commerce application that consists of three microservices: wallet, shop, and inventory.
@@ -14,13 +15,24 @@ The project is an e-commerce application that consists of three microservices: w
 * Resilience4j circuit breaker
 * MySQL
 * Maven
+* Docker
+
+## Docker hub and images
+* https://hub.docker.com/u/haninz
+* haninz/cms-naming-server:0.0.1-SNAPSHOT
+* haninz/cms-api-gateway:0.0.1-SNAPSHOT
+* haninz/cms-spring-cloud-config-server:0.0.1-SNAPSHOT
+* haninz/cms-shop-service:0.0.1-SNAPSHOT
+* haninz/cms-wallet-service:0.0.1-SNAPSHOT
+* haninz/cms-inventory-service:0.0.1-SNAPSHOT
+
 
 
 ## Features
 
 ### Wallet Microservice:
 
-* User registration and login
+* User registration
 * Wallet creation and management
 * Deposit and withdrawal of funds
 * Transaction history
@@ -38,3 +50,4 @@ The project is an e-commerce application that consists of three microservices: w
 * Product creation and management
 * Inventory management
 * RESTful API endpoints
+
