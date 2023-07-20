@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.RestController;
 
-import com.haninz.microservices.walletservice.models.User;
 import com.haninz.microservices.walletservice.models.Wallet;
 import com.haninz.microservices.walletservice.models.PaymentTransactionHistory;
 import com.haninz.microservices.walletservice.services.PaymentTransactionHistoryService;
@@ -71,8 +70,6 @@ public class WalletController {
 	
 	@PostMapping("/wallets/{orderId}/pay")
 	public void payUserOrder(@PathVariable Long orderId) {
-		
-		
 		 walletService.payTheOrder(orderId);
 		
 	}

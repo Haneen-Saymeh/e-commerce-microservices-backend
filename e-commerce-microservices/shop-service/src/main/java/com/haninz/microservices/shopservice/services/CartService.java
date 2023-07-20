@@ -34,6 +34,9 @@ public class CartService {
 	@Autowired
 	private CartItemRepository cartItemRepo;
 	
+	@Autowired
+	private CartItemService cartItemService;
+	
 	
 	
 	public Cart createCart(Long userId) throws Exception {
@@ -50,7 +53,7 @@ public class CartService {
 	}
 	
 	
-	public Cart addItemToCart(Long cartId,Long productId,Integer quantity) throws Exception {
+	public List<CartItem> addItemToCart(Long cartId,Long productId,Integer quantity) throws Exception {
 		Optional<Cart> cart = cartRepo.findById(cartId);
 		Cart theCart = cart.get();
 		Double price = inventoryProxy.getOneProduct(productId).getPrice();
@@ -65,7 +68,7 @@ public class CartService {
 		cartItems.add(cartItem);
 		theCart.setCartItems(cartItems);
 		cartRepo.save(theCart);
-		return theCart;
+		return theCart.getCartItems();
 	}
 	
 	
@@ -83,13 +86,6 @@ public class CartService {
 	}
 
 	
-	public void removeItemToCart(Cart cart, CartItem cartItem) {
-		List<CartItem> cartItems = cart.getCartItems();
-		cartItems.remove(cartItem);
-		cart.setCartItems(cartItems);
-		cartRepo.save(cart);
-		
-	}
 	
 	public Cart getCart(Long id) {
 		Optional<Cart> cart=cartRepo.findById(id);
@@ -103,9 +99,21 @@ public class CartService {
 	public void deleteCart(Long id) {
 		cartRepo.deleteById(id);
 	}
+	
+	
+	public List<CartItem> removeItemFromCart(Long cartId, Long cartItemId) {
+		Cart cart= getCart(cartId);
+		CartItem cartItem = cartItemService.getCartItem(cartItemId);
+		List<CartItem> cartItems = cart.getCartItems();
+		cartItems.remove(cartItem);
+		cart.setCartItems(cartItems);
+		cartRepo.save(cart);
+		return cart.getCartItems();
+		
+	}
 
 
-	public Cart updateCartItemQuantity(Long cartId, Long itemId, Integer quantity) {
+	public List<CartItem> updateCartItemQuantity(Long cartId, Long itemId, Integer quantity) {
 		 Cart cart = getCart(cartId);
 	        List<CartItem> cartItems = cart.getCartItems();
 	        CartItem cartItemToUpdate = null;
@@ -127,7 +135,7 @@ public class CartService {
 	        cartItemToUpdate.setQuantity(quantity);
 	        cartRepo.save(cart);
 
-	        return cart;
+	        return cart.getCartItems();
 	    }
 	
 	     

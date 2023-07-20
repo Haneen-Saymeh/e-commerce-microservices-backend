@@ -16,9 +16,13 @@ public class ProductService {
 	@Autowired
 	private ProductRepository productRepo;
 	
+	
+	
 	public List<Product> findProducts(){
 		return productRepo.findAll();
 	}
+	
+	
 	
 	public Product getProduct(Long id) {
 		Optional<Product> product = productRepo.findById(id);
@@ -40,6 +44,33 @@ public class ProductService {
 	public Product saveProduct(Product product) {
 		return productRepo.save(product);
 		
+	}
+	
+	public Product updateProudct(Long productId, Product updatedProduct) {
+		 Product currentProduct = getProduct(productId);
+		    
+		    currentProduct.setName(updatedProduct.getName());
+		    currentProduct.setDescription(updatedProduct.getDescription());
+		    currentProduct.setPrice(updatedProduct.getPrice());
+		    currentProduct.setStock(updatedProduct.getStock());
+		    productRepo.save(currentProduct);
+		    return currentProduct;
+	}
+	
+	public void updateProductStock(Long productId, int quantity) {
+		Product product= getProduct(productId);
+		int currentStock = product.getStock();
+        int updatedStock = currentStock - quantity;
+        product.setStock(updatedStock);
+        productRepo.save(product);
+	}
+	
+	public Product increaseProductQuantity(Long productId, int quantity) {
+		 Product product = getProduct(productId);
+		 int productQuanity = product.getStock();
+			product.setStock(productQuanity+quantity);
+			productRepo.save(product);
+			return product;
 	}
 
 

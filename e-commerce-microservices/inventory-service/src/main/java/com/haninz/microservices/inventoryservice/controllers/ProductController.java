@@ -56,37 +56,21 @@ public class ProductController {
 	
 	@PutMapping("/products/{id}")
 	public Product updateProduct(@PathVariable Long id, @RequestBody Product updatedProduct) {
-	    
-	    Product currentProduct = productService.getProduct(id);
-	    
-	    currentProduct.setName(updatedProduct.getName());
-	    currentProduct.setDescription(updatedProduct.getDescription());
-	    currentProduct.setPrice(updatedProduct.getPrice());
-	    currentProduct.setStock(updatedProduct.getStock());
-	    return productService.saveProduct(currentProduct);
+	    return productService.updateProudct(id, updatedProduct);
 	}
 	
 	
 
 	@PutMapping("/products/{productId}/stock")
 	public Product increaseProductQuantity(@PathVariable Long productId, @RequestBody int quantity){
-		Product product = productService.getProduct(productId);
-		int productQuanity = product.getStock();
-		product.setStock(productQuanity+quantity);
-		 return productService.saveProduct(product);
+		 return productService.increaseProductQuantity(productId, quantity);
 	}
 	
 	
 	
 	@PutMapping("/products/{productId}/{quantity}")
 	public void updateProductQuantity(@PathVariable Long productId, @PathVariable int quantity) {
-		 Product product = productService.getProduct(productId);
-	        int currentStock = product.getStock();
-	        int updatedStock = currentStock - quantity;
-	        product.setStock(updatedStock);
-	        
-	        productService.saveProduct(product);
-		
+	        productService.updateProductStock(productId, quantity);
 	}
 
 }

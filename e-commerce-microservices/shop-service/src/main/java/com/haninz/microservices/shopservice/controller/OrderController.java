@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.haninz.microservices.shopservice.DTO.OrderItemDto;
 import com.haninz.microservices.shopservice.DTO.PaymentDto;
+import com.haninz.microservices.shopservice.exceptions.OrderCannotBeAdjustedException;
 import com.haninz.microservices.shopservice.feignclients.InventoryProxy;
 import com.haninz.microservices.shopservice.feignclients.WalletProxy;
 import com.haninz.microservices.shopservice.models.Cart;
@@ -76,7 +77,7 @@ public class OrderController {
 		orderService.saveOrder(order);
 		}
 		else {
-			throw new Exception("Can't change status of the order");
+			throw new OrderCannotBeAdjustedException("Can't change status of the order");
 		}
 		
 		return order;
@@ -102,7 +103,7 @@ public class OrderController {
 				return order;
 				
 			}
-			throw new Exception("Order can't be adjusted");
+			throw new OrderCannotBeAdjustedException("Order can't be adjusted");
 			
 		}
 	 

@@ -45,5 +45,13 @@ public class ShopServiceExceptionHandler {
 		
 		return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
 	}
+	
+	
+	@ExceptionHandler
+	public ResponseEntity<ShopServiceErrorResponse> handleException(OrderCannotBeAdjustedException exc){
+		ShopServiceErrorResponse error = new ShopServiceErrorResponse(HttpStatus.BAD_REQUEST.value(),exc.getMessage(),System.currentTimeMillis());
+		
+		return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
+	}
 
 }

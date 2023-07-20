@@ -53,14 +53,13 @@ public class CartController {
 	@PostMapping("/carts/{id}/empty")
 	public String emptyCart( @PathVariable Long id) {
 		cartService.emptyItemsFromCart(id);
-		
 		 return "cart with id: " + id +" is empty now!";
 	}
 	
 	
 	@CircuitBreaker(name = "InventoryCall", fallbackMethod = "InventoryProxyFallback")
 	@PostMapping("/carts/{cartId}/add/{productId}")
-	public Cart addToCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId, @RequestBody Integer quantity) throws Exception {
+	public List<CartItem> addToCart(@PathVariable("cartId") Long cartId, @PathVariable("productId") Long productId, @RequestBody Integer quantity) throws Exception {
 	return	cartService.addItemToCart(cartId, productId, quantity);
 		
 	}
@@ -68,19 +67,13 @@ public class CartController {
 	
 	public Cart InventoryProxyFallback(Long cartId, Long productId, Integer quantity, Exception ex) {
 		 Cart fallbackCart = new Cart();
-		  
 		    return fallbackCart;
 	}
 	
 	@PostMapping("/carts/{cartId}/remove/{cartItemId}")
-	public Cart removeFromCart(@PathVariable("cartId") Long cartId, @PathVariable("cartItemId") Long cartItemId) {
-		Cart cart = cartService.getCart(cartId);
+	public List<CartItem> removeFromCart(@PathVariable("cartId") Long cartId, @PathVariable("cartItemId") Long cartItemId) {
+		 return cartService.removeItemFromCart(cartId, cartItemId);
 		
-		CartItem cartItem = cartItemService.getCartItem(cartItemId);
-		
-		cartService.removeItemToCart(cart, cartItem);
-		cartService.saveCart(cart);
-		return cart;
 	}
 	
 	
@@ -99,7 +92,7 @@ public class CartController {
 	
 	
 	@PutMapping("/carts/{cartId}/items/{itemId}")
-	public Cart updateCartItemQuantity(@PathVariable("cartId") Long cartId, @PathVariable("itemId") Long itemId, @RequestBody Integer quantity) throws Exception {
+	public List<CartItem> updateCartItemQuantity(@PathVariable("cartId") Long cartId, @PathVariable("itemId") Long itemId, @RequestBody Integer quantity) throws Exception {
 	    return cartService.updateCartItemQuantity(cartId, itemId, quantity);
 	}
 
